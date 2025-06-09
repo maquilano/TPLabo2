@@ -18,7 +18,7 @@ pygame.init()
 ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
 pygame.display.set_caption("Tablero de Ajedrez 8x8")
 
-imagen_pieza = pygame.image.load('C:/TPLabo2/piezas imagenes/rey_blanco.png').convert_alpha()
+imagen_pieza = pygame.image.load('piezas imagenes/rey_blanco.png').convert_alpha()
 imagen_pieza = pygame.transform.scale(imagen_pieza, (TAM_CELDA, TAM_CELDA))  # ajustar tamaño a la celda
 
 # Control de ejecución
