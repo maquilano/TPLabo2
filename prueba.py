@@ -18,8 +18,35 @@ pygame.init()
 ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
 pygame.display.set_caption("Tablero de Ajedrez 8x8")
 
-imagen_pieza = pygame.image.load('piezas imagenes/rey_blanco.png').convert_alpha()
-imagen_pieza = pygame.transform.scale(imagen_pieza, (TAM_CELDA, TAM_CELDA))  # ajustar tamaño a la celda
+# Piezas
+
+# Blancas
+rey_blanco = pygame.image.load('piezas imagenes/rey_blanco.png').convert_alpha()
+rey_blanco = pygame.transform.scale(rey_blanco, (TAM_CELDA, TAM_CELDA))  # ajusta tamaño a la celda
+reina_blanca = pygame.image.load('piezas imagenes/reina_blanco.png').convert_alpha()
+reina_blanca = pygame.transform.scale(reina_blanca, (TAM_CELDA, TAM_CELDA))  
+alfil_blanco = pygame.image.load('piezas imagenes/alfil_blanco.png').convert_alpha()
+alfil_blanco = pygame.transform.scale(alfil_blanco, (TAM_CELDA, TAM_CELDA))  
+torre_blanca = pygame.image.load('piezas imagenes/torre_blanco.png').convert_alpha()
+torre_blanca = pygame.transform.scale(torre_blanca, (TAM_CELDA, TAM_CELDA))  
+caballo_blanco = pygame.image.load('piezas imagenes/caballo_blanco.png').convert_alpha()
+caballo_blanco = pygame.transform.scale(caballo_blanco, (TAM_CELDA, TAM_CELDA))  
+peon_blanco = pygame.image.load('piezas imagenes/peon_blanco.png').convert_alpha()
+peon_blanco = pygame.transform.scale(peon_blanco, (TAM_CELDA, TAM_CELDA))  
+
+#negras
+rey_negro = pygame.image.load('piezas imagenes/rey_negro.png').convert_alpha()
+rey_negro = pygame.transform.scale(rey_negro, (TAM_CELDA, TAM_CELDA)) 
+reina_negra = pygame.image.load('piezas imagenes/reina_negro.png').convert_alpha()
+reina_negra = pygame.transform.scale(reina_negra, (TAM_CELDA, TAM_CELDA))  
+alfil_negro = pygame.image.load('piezas imagenes/alfil_negro.png').convert_alpha()
+alfil_negro = pygame.transform.scale(alfil_negro, (TAM_CELDA, TAM_CELDA))  
+torre_negra = pygame.image.load('piezas imagenes/torre_negro.png').convert_alpha()
+torre_negra = pygame.transform.scale(torre_negra, (TAM_CELDA, TAM_CELDA))  
+caballo_negro = pygame.image.load('piezas imagenes/caballo_negro.png').convert_alpha()
+caballo_negro = pygame.transform.scale(caballo_negro, (TAM_CELDA, TAM_CELDA))  
+peon_negro = pygame.image.load('piezas imagenes/peon_negro.png').convert_alpha()
+peon_negro = pygame.transform.scale(peon_negro, (TAM_CELDA, TAM_CELDA))  
 
 # Control de ejecución
 running = True
@@ -37,7 +64,7 @@ def dibujar_tablero():
         fila, col = celda_seleccionada
         rect = pygame.Rect(col * TAM_CELDA, fila * TAM_CELDA, TAM_CELDA, TAM_CELDA)
         pygame.draw.rect(ventana, AZUL, rect, 4)  # borde azul
-        ventana.blit(imagen_pieza, (col * TAM_CELDA, fila * TAM_CELDA))
+        ventana.blit(alfil_negro, (col * TAM_CELDA, fila * TAM_CELDA))
 
 # Bucle principal
 while running:
