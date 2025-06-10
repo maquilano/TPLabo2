@@ -61,10 +61,10 @@ PIEZAS = {
 
 # Posiciones iniciales de las piezas (pieza, columna, fila)
 posiciones_piezas = [
-    ("tn", 0, 7), ("cn", 1, 7), ("an", 2, 7), ("dn", 3, 7), ("rn", 4, 7), ("an", 5, 7), ("cn", 6, 7), ("tn", 7, 7),
-    *[("pn", i, 6) for i in range(8)],
-    *[("pb", i, 1) for i in range(8)],
-    ("tb", 0, 0), ("cb", 1, 0), ("ab", 2, 0), ("db", 3, 0), ("rb", 4, 0), ("ab", 5, 0), ("cb", 6, 0), ("tb", 7, 0),
+    ("tn", 0, 0), ("cn", 1, 0), ("an", 2, 0), ("dn", 3, 0), ("rn", 4, 0), ("an", 5, 0), ("cn", 6, 0), ("tn", 7, 0),
+    *[("pn", i, 1) for i in range(8)],
+    *[("pb", i, 6) for i in range(8)],
+    ("tb", 0, 7), ("cb", 1, 7), ("ab", 2, 7), ("db", 3, 7), ("rb", 4, 7), ("ab", 5, 7), ("cb", 6, 7), ("tb", 7, 7),
 ]
 
 # Control de ejecución
