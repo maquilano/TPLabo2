@@ -16,7 +16,7 @@ AZUL = (50, 130, 200)
 pygame.init()
 ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
 pygame.display.set_caption("Tablero de Ajedrez 8x8")
-
+'''
 # Cargar imágenes de las piezas
 rey_blanco = pygame.image.load('piezas imagenes/rey_blanco.png').convert_alpha()
 rey_blanco = pygame.transform.scale(rey_blanco, (TAM_CELDA, TAM_CELDA))
@@ -43,21 +43,32 @@ caballo_negro = pygame.image.load('piezas imagenes/caballo_negro.png').convert_a
 caballo_negro = pygame.transform.scale(caballo_negro, (TAM_CELDA, TAM_CELDA))
 peon_negro = pygame.image.load('piezas imagenes/peon_negro.png').convert_alpha()
 peon_negro = pygame.transform.scale(peon_negro, (TAM_CELDA, TAM_CELDA))
+'''
+def cargar_imagenes(nombre_img):
+    imagen = pygame.image.load(f"piezas imagenes/{nombre_img}.png").convert_alpha()
+    imagen_escalada = pygame.transform.scale(imagen, (TAM_CELDA, TAM_CELDA))
+    return imagen_escalada
 
-PIEZAS = {
-    "rb": rey_blanco,
-    "db": reina_blanca,
-    "ab": alfil_blanco,
-    "tb": torre_blanca,
-    "cb": caballo_blanco,
-    "pb": peon_blanco,
-    "rn": rey_negro,
-    "dn": reina_negra,
-    "an": alfil_negro,
-    "tn": torre_negra,
-    "cn": caballo_negro,
-    "pn": peon_negro,
+Nombres_piezas = {
+    "rb": "rey_blanco",
+    "db": "reina_blanco",
+    "ab": "alfil_blanco",
+    "tb": "torre_blanco",
+    "cb": "caballo_blanco",
+    "pb": "peon_blanco",
+    "rn": "rey_negro",
+    "dn": "reina_negro",
+    "an": "alfil_negro",
+    "tn": "torre_negro",
+    "cn": "caballo_negro",
+    "pn": "peon_negro",
 }
+
+PIEZAS = {}
+
+for clave, nombre in Nombres_piezas.items():
+    imagen = cargar_imagenes(nombre)
+    PIEZAS[clave] = imagen
 
 # Posiciones iniciales de las piezas (pieza, columna, fila)
 posiciones_piezas = [
@@ -69,6 +80,9 @@ posiciones_piezas = [
 
 # Control de ejecución
 running = True
+
+#Variables de control
+pieza_seleccionada = None 
 celda_seleccionada = None
 
 def dibujar_tablero():
@@ -91,10 +105,11 @@ def dibujar_tablero():
 # Bucle principal
 while running:
     for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
+        if evento.type == pygame.QUIT: #fin del while si user cierra el programa 
             running = False
-        elif evento.type == pygame.MOUSEBUTTONDOWN:
-            x, y = pygame.mouse.get_pos()
+
+        elif evento.type == pygame.MOUSEBUTTONDOWN: #Detecto si el user hizo click en la ventana del juego
+            x, y = pygame.mouse.get_pos() #Obtenemos cordenadas del click para luego identidicar la celda seleccionada
             fila = y // TAM_CELDA
             col = x // TAM_CELDA
             celda_seleccionada = (fila, col)
