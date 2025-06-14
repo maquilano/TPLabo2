@@ -16,39 +16,14 @@ AZUL = (50, 130, 200)
 pygame.init()
 ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
 pygame.display.set_caption("Tablero de Ajedrez 8x8")
-'''
-# Cargar imágenes de las piezas
-rey_blanco = pygame.image.load('piezas imagenes/rey_blanco.png').convert_alpha()
-rey_blanco = pygame.transform.scale(rey_blanco, (TAM_CELDA, TAM_CELDA))
-reina_blanca = pygame.image.load('piezas imagenes/reina_blanco.png').convert_alpha()
-reina_blanca = pygame.transform.scale(reina_blanca, (TAM_CELDA, TAM_CELDA))
-alfil_blanco = pygame.image.load('piezas imagenes/alfil_blanco.png').convert_alpha()
-alfil_blanco = pygame.transform.scale(alfil_blanco, (TAM_CELDA, TAM_CELDA))
-torre_blanca = pygame.image.load('piezas imagenes/torre_blanco.png').convert_alpha()
-torre_blanca = pygame.transform.scale(torre_blanca, (TAM_CELDA, TAM_CELDA))
-caballo_blanco = pygame.image.load('piezas imagenes/caballo_blanco.png').convert_alpha()
-caballo_blanco = pygame.transform.scale(caballo_blanco, (TAM_CELDA, TAM_CELDA))
-peon_blanco = pygame.image.load('piezas imagenes/peon_blanco.png').convert_alpha()
-peon_blanco = pygame.transform.scale(peon_blanco, (TAM_CELDA, TAM_CELDA))
 
-rey_negro = pygame.image.load('piezas imagenes/rey_negro.png').convert_alpha()
-rey_negro = pygame.transform.scale(rey_negro, (TAM_CELDA, TAM_CELDA))
-reina_negra = pygame.image.load('piezas imagenes/reina_negro.png').convert_alpha()
-reina_negra = pygame.transform.scale(reina_negra, (TAM_CELDA, TAM_CELDA))
-alfil_negro = pygame.image.load('piezas imagenes/alfil_negro.png').convert_alpha()
-alfil_negro = pygame.transform.scale(alfil_negro, (TAM_CELDA, TAM_CELDA))
-torre_negra = pygame.image.load('piezas imagenes/torre_negro.png').convert_alpha()
-torre_negra = pygame.transform.scale(torre_negra, (TAM_CELDA, TAM_CELDA))
-caballo_negro = pygame.image.load('piezas imagenes/caballo_negro.png').convert_alpha()
-caballo_negro = pygame.transform.scale(caballo_negro, (TAM_CELDA, TAM_CELDA))
-peon_negro = pygame.image.load('piezas imagenes/peon_negro.png').convert_alpha()
-peon_negro = pygame.transform.scale(peon_negro, (TAM_CELDA, TAM_CELDA))
-'''
+
 def cargar_imagenes(nombre_img):
     imagen = pygame.image.load(f"piezas imagenes/{nombre_img}.png").convert_alpha()
     imagen_escalada = pygame.transform.scale(imagen, (TAM_CELDA, TAM_CELDA))
     return imagen_escalada
 
+#diccionario que va a usar cargar_imagenes para cargar y reescalar cada imagen
 Nombres_piezas = {
     "rb": "rey_blanco",
     "db": "reina_blanco",
@@ -64,9 +39,10 @@ Nombres_piezas = {
     "pn": "peon_negro",
 }
 
+#diccionario donde se van a cargar como clabe la abreviacion de la pieza y como valor la imagen reescalada
 PIEZAS = {}
 
-for clave, nombre in Nombres_piezas.items():
+for clave, nombre in Nombres_piezas.items(): #clave = rb, nombre = rey_blanco
     imagen = cargar_imagenes(nombre)
     PIEZAS[clave] = imagen
 
