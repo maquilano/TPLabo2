@@ -45,12 +45,21 @@ for clave, nombre in Nombres_piezas.items():
     imagen = cargar_imagenes(nombre)
     PIEZAS[clave] = imagen
 
+#diccionario donde se van a cargar como clabe la abreviacion de la pieza y como valor la imagen reescalada
+PIEZAS = {}
+
+for clave, nombre in Nombres_piezas.items(): #clave = rb, nombre = rey_blanco
+    imagen = cargar_imagenes(nombre)
+    PIEZAS[clave] = imagen
+
 # Posiciones iniciales de las piezas (pieza, columna, fila)
 posiciones_piezas = [
+
     ("tn", 0, 7), ("cn", 1, 7), ("an", 2, 7), ("dn", 3, 7), ("rn", 4, 7), ("an", 5, 7), ("cn", 6, 7), ("tn", 7, 7), #dn=reina negra
     *[("pn", i, 6) for i in range(8)],
     *[("pb", i, 1) for i in range(8)],
     ("tb", 0, 0), ("cb", 1, 0), ("ab", 2, 0), ("db", 3, 0), ("rb", 4, 0), ("ab", 5, 0), ("cb", 6, 0), ("tb", 7, 0),
+    
 ]
 
 # Clase para representar movimientos
@@ -89,6 +98,9 @@ def mover_pieza(inicio, final):
 
 # Variables de control
 running = True
+
+#Variables de control
+pieza_seleccionada = None 
 celda_seleccionada = None
 clicks_jugador = []
 historial_movimientos = []
@@ -114,10 +126,11 @@ def dibujar_tablero():
 # Bucle principal
 while running:
     for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
+        if evento.type == pygame.QUIT: #fin del while si user cierra el programa 
             running = False
-        elif evento.type == pygame.MOUSEBUTTONDOWN:
-            x, y = pygame.mouse.get_pos()
+
+        elif evento.type == pygame.MOUSEBUTTONDOWN: #Detecto si el user hizo click en la ventana del juego
+            x, y = pygame.mouse.get_pos() #Obtenemos cordenadas del click para luego identidicar la celda seleccionada
             fila = y // TAM_CELDA
             col = x // TAM_CELDA
             celda = (fila, col)
