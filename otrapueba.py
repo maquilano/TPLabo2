@@ -15,7 +15,7 @@ AZUL = (50, 130, 200)
 # Inicializar Pygame
 pygame.init()
 ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
-pygame.display.set_caption("Ajedrez en Python!")
+pygame.display.set_caption("Tablero de Ajedrez 8x8")
 
 
 def cargar_imagenes(nombre_img):
@@ -38,8 +38,14 @@ Nombres_piezas = {
     "cn": "caballo_negro",
     "pn": "peon_negro",
 }
-
 #diccionario donde se van a cargar como clave la abreviacion de la pieza y como valor la imagen reescalada
+PIEZAS = {}
+
+for clave, nombre in Nombres_piezas.items():
+    imagen = cargar_imagenes(nombre)
+    PIEZAS[clave] = imagen
+
+#diccionario donde se van a cargar como clabe la abreviacion de la pieza y como valor la imagen reescalada
 PIEZAS = {}
 
 for clave, nombre in Nombres_piezas.items(): #clave = rb, nombre = rey_blanco
@@ -48,29 +54,59 @@ for clave, nombre in Nombres_piezas.items(): #clave = rb, nombre = rey_blanco
 
 # Posiciones iniciales de las piezas (pieza, columna, fila)
 posiciones_piezas = [
-    ("tn", 0, 0), ("cn", 1, 0), ("an", 2, 0), ("dn", 3, 0), ("rn", 4, 0), ("an", 5, 0), ("cn", 6, 0), ("tn", 7, 0),
-    *[("pn", i, 1) for i in range(8)],
-    *[("pb", i, 6) for i in range(8)],
-    ("tb", 0, 7), ("cb", 1, 7), ("ab", 2, 7), ("db", 3, 7), ("rb", 4, 7), ("ab", 5, 7), ("cb", 6, 7), ("tb", 7, 7),
+
+    ("tn", 0, 7), ("cn", 1, 7), ("an", 2, 7), ("dn", 3, 7), ("rn", 4, 7), ("an", 5, 7), ("cn", 6, 7), ("tn", 7, 7), #dn=reina negra
+    *[("pn", i, 6) for i in range(8)],
+    *[("pb", i, 1) for i in range(8)],
+    ("tb", 0, 0), ("cb", 1, 0), ("ab", 2, 0), ("db", 3, 0), ("rb", 4, 0), ("ab", 5, 0), ("cb", 6, 0), ("tb", 7, 0),
+    
 ]
 
-# Definiendo tiempos
+# Clase para representar movimientos
+class Movimiento:
+    def __init__(self, inicio, final, pieza_movida, pieza_capturada):
+        self.inicioFila = inicio[0]
+        self.inicioCol = inicio[1]
+        self.finalFila = final[0]
+        self.finalCol = final[1]
+        self.piezaMovida = pieza_movida
+        self.piezaCapturada = pieza_capturada
 
-TIEMPO_TOTAL = 300  # 5 minutos en segundos
-tiempo_blancas = TIEMPO_TOTAL
-tiempo_negras = TIEMPO_TOTAL
-ultimo_tiempo = pygame.time.get_ticks()
-turno_blancas = True
+#imprime donde empieza y termina el mov de una pieza
+    def __str__(self):
+        return f"{self.piezaMovida} de ({self.inicioFila},{self.inicioCol}) a ({self.finalFila},{self.finalCol})"
 
-# Control de ejecución
+# Función para obtener pieza en una celda
+def obtener_pieza_en(fila, col):
+    for pieza, c, f in posiciones_piezas:
+        if f == fila and c == col:
+            return pieza
+    return None                             # no hay pieza en esa celda
+
+# Función para eliminar pieza en una casilla
+def eliminar_pieza_en(fila, col):
+    global posiciones_piezas
+    posiciones_piezas = [(p, c, f) for (p, c, f) in posiciones_piezas if not (f == fila and c == col)]
+
+# Función para mover pieza de una casilla a otra
+def mover_pieza(inicio, final):
+    pieza = obtener_pieza_en(*inicio)
+    if pieza:
+        eliminar_pieza_en(*inicio)
+        eliminar_pieza_en(*final)                              # por si hay una pieza enemiga
+        posiciones_piezas.append((pieza, final[1], final[0]))  #  (pieza, col, fila)
+
+# Variables de control
 running = True
 
 #Variables de control
 pieza_seleccionada = None 
 celda_seleccionada = None
+clicks_jugador = []
+historial_movimientos = []
 
+# Dibujar tablero y piezas
 def dibujar_tablero():
-
     for fila in range(FILAS):
         for col in range(COLUMNAS):
             color = BLANCO if (fila + col) % 2 == 0 else GRIS
@@ -86,35 +122,9 @@ def dibujar_tablero():
     for pieza, col, fila in posiciones_piezas:
         if pieza in PIEZAS:
             ventana.blit(PIEZAS[pieza], (col * TAM_CELDA, fila * TAM_CELDA))
-    
-        fuente = pygame.font.SysFont("Arial", 24)
-    texto_blancas = fuente.render(f"Blancas: {int(tiempo_blancas)}s", True, (0, 0, 0))
-    texto_negras = fuente.render(f"Negras: {int(tiempo_negras)}s", True, (0, 0, 0))
-    ventana.blit(texto_blancas, (10, 10))
-    ventana.blit(texto_negras, (10, 40))
-    
 
 # Bucle principal
 while running:
-     # Calcular tiempo transcurrido desde el último frame
-    tiempo_actual = pygame.time.get_ticks()
-    delta = (tiempo_actual - ultimo_tiempo) / 1000  # En segundos
-    ultimo_tiempo = tiempo_actual
-
-    # Restar al jugador correspondiente
-    if turno_blancas:
-        tiempo_blancas -= delta
-    else:
-        tiempo_negras -= delta
-
-    # Verificar si algún jugador se quedó sin tiempo
-    if tiempo_blancas <= 0:
-        print("¡Se acabó el tiempo de las BLANCAS! Negras ganan.")
-        running = False
-    elif tiempo_negras <= 0:
-        print("¡Se acabó el tiempo de las NEGRAS! Blancas ganan.")
-        running = False
-
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT: #fin del while si user cierra el programa 
             running = False
@@ -123,7 +133,29 @@ while running:
             x, y = pygame.mouse.get_pos() #Obtenemos cordenadas del click para luego identidicar la celda seleccionada
             fila = y // TAM_CELDA
             col = x // TAM_CELDA
-            celda_seleccionada = (fila, col)
+            celda = (fila, col)
+
+            if celda_seleccionada == celda:     #Si hace doble click a una pieza
+                celda_seleccionada = None       #Se borra la seleccion de celda
+                clicks_jugador = []             #se reinicia el contador de clicks
+            else:
+                celda_seleccionada = celda  
+                clicks_jugador.append(celda)    #Se guarda la seleccion en el contador de clicks
+
+                if len(clicks_jugador) == 2:        
+                    inicio = clicks_jugador[0]              #se hace click en la pieza en su lugar inicial
+                    final = clicks_jugador[1]               #se hace click en el lugar donde se quiere mover la pieza
+                    pieza_movida = obtener_pieza_en(*inicio)    #guarda la posicion 
+                    pieza_capturada = obtener_pieza_en(*final)
+
+                    if pieza_movida:
+                        mover_pieza(inicio, final)
+                        movimiento = Movimiento(inicio, final, pieza_movida, pieza_capturada)
+                        historial_movimientos.append(movimiento)
+                        print(movimiento)
+
+                    clicks_jugador = []
+                    celda_seleccionada = None
 
     dibujar_tablero()
     pygame.display.flip()
