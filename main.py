@@ -12,6 +12,7 @@ BLANCO = (245, 245, 245)
 GRIS = (125, 135, 150)
 AZUL = (50, 130, 200)
 
+tablero = chess.Board()
 # Inicializar Pygame
 pygame.init()
 ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
@@ -78,6 +79,7 @@ def dibujar_tablero():
         if pieza in PIEZAS:
             ventana.blit(PIEZAS[pieza], (col * TAM_CELDA, fila * TAM_CELDA))
 
+#----------------------------------------------------------------------------------------------------------------------------------
 # Bucle principal
 while running:
     for evento in pygame.event.get():
@@ -88,7 +90,32 @@ while running:
             x, y = pygame.mouse.get_pos() #Obtenemos cordenadas del click para luego identidicar la celda seleccionada
             fila = y // TAM_CELDA
             col = x // TAM_CELDA
-            celda_seleccionada = (fila, col)
+
+            if celda_seleccionada:
+                fila_origen, col_origen = celda_seleccionada
+                fila_destino, col_destino = fila, col
+
+                #convierto las coord de pygame a las de python-chess
+                origen = chess.square(col_origen, 7 - fila_origen)
+                destino = chess.square(col_destino, 7 - fila_destino)
+
+                movimiento = chess.Move(origen, destino)
+
+                if movimiento in tablero.legal_moves:
+                    tablero.push(movimiento)
+
+                    # Actualizar visualmente la pieza movida
+                    for i, (pieza, c, f) in enumerate(posiciones_piezas):
+                        if (f, c) == (fila_origen, col_origen):
+                            posiciones_piezas[i] = (pieza, col_destino, fila_destino)
+                            break
+                else:
+                    print("Movimiento ilegal")
+
+                celda_seleccionada = None
+            else:
+                # Selección inicial
+                celda_seleccionada = (fila, col)
 
     dibujar_tablero()
     pygame.display.flip()
