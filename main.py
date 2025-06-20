@@ -129,7 +129,7 @@ while running:
 
                 # Crear un objeto de movimiento de python-chess
                 pieza = tablero.piece_at(square_origen)
-                es_peon = pieza is not None and pieza.piece_type == chess.PAWN
+                es_peon = pieza.piece_type == chess.PAWN
                 movimiento = chess.Move(square_origen, square_destino, promotion=chess.QUEEN 
                 if es_peon and (fila_destino == 0 or fila_destino == 7) else None)
 
