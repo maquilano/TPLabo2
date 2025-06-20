@@ -180,7 +180,7 @@ while running:
     delta = ahora - ultimo_tiempo
     ultimo_tiempo = ahora
 
-    if turno_blanco:
+    if tablero.turn == chess.WHITE:
         tiempo_blancas -= delta
     else:
         tiempo_negras -= delta
