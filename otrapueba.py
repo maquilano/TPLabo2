@@ -1,5 +1,6 @@
 import pygame
 import chess
+import time
 
 # Configuración básica
 ANCHO_VENTANA = 640
@@ -54,12 +55,10 @@ for clave, nombre in Nombres_piezas.items(): #clave = rb, nombre = rey_blanco
 
 # Posiciones iniciales de las piezas (pieza, columna, fila)
 posiciones_piezas = [
-
-    ("tn", 0, 7), ("cn", 1, 7), ("an", 2, 7), ("dn", 3, 7), ("rn", 4, 7), ("an", 5, 7), ("cn", 6, 7), ("tn", 7, 7), #dn=reina negra
-    *[("pn", i, 6) for i in range(8)],
-    *[("pb", i, 1) for i in range(8)],
-    ("tb", 0, 0), ("cb", 1, 0), ("ab", 2, 0), ("db", 3, 0), ("rb", 4, 0), ("ab", 5, 0), ("cb", 6, 0), ("tb", 7, 0),
-    
+    ("tn", 0, 0), ("cn", 1, 0), ("an", 2, 0), ("dn", 3, 0), ("rn", 4, 0), ("an", 5, 0), ("cn", 6, 0), ("tn", 7, 0),
+    *[("pn", i, 1) for i in range(8)],
+    *[("pb", i, 6) for i in range(8)],
+    ("tb", 0, 7), ("cb", 1, 7), ("ab", 2, 7), ("db", 3, 7), ("rb", 4, 7), ("ab", 5, 7), ("cb", 6, 7), ("tb", 7, 7),
 ]
 
 # Clase para representar movimientos
@@ -105,6 +104,19 @@ celda_seleccionada = None
 clicks_jugador = []
 historial_movimientos = []
 
+# Definir tiempos
+
+tiempo_total=300
+tiempo_blancas=tiempo_total
+tiempo_negras=tiempo_total
+turno_blanco = True
+
+# Última vez que se actualizó el temporizador
+ultimo_tiempo = time.time()
+
+# Fuente para mostrar tiempo en pantalla
+fuente = pygame.font.SysFont("Arial", 24)
+
 # Dibujar tablero y piezas
 def dibujar_tablero():
     for fila in range(FILAS):
@@ -122,6 +134,16 @@ def dibujar_tablero():
     for pieza, col, fila in posiciones_piezas:
         if pieza in PIEZAS:
             ventana.blit(PIEZAS[pieza], (col * TAM_CELDA, fila * TAM_CELDA))
+    
+def dibujar_tiempos():
+    tiempo_b_str = time.strftime('%M:%S', time.gmtime(tiempo_blancas))
+    tiempo_n_str = time.strftime('%M:%S', time.gmtime(tiempo_negras))
+
+    texto_blanco = fuente.render(f"Blancas: {tiempo_b_str}", True, (0, 0, 0))
+    texto_negro = fuente.render(f"Negras: {tiempo_n_str}", True, (0, 0, 0))
+
+    ventana.blit(texto_blanco, (10, 10))
+    ventana.blit(texto_negro, (10, 40))
 
 # Bucle principal
 while running:
@@ -153,11 +175,31 @@ while running:
                         movimiento = Movimiento(inicio, final, pieza_movida, pieza_capturada)
                         historial_movimientos.append(movimiento)
                         print(movimiento)
+                        turno_blanco = not turno_blanco  # Cambiar turno
 
                     clicks_jugador = []
                     celda_seleccionada = None
 
+    # Actualizar temporizador
+    ahora = time.time()
+    delta = ahora - ultimo_tiempo
+    ultimo_tiempo = ahora
+
+    if turno_blanco:
+        tiempo_blancas -= delta
+    else:
+        tiempo_negras -= delta
+
+    # Si alguno llega a 0, termina el juego
+    if tiempo_blancas <= 0:
+        print("¡Las negras ganan por tiempo!")
+        running = False
+    elif tiempo_negras <= 0:
+        print("¡Las blancas ganan por tiempo!")
+        running = False
+
     dibujar_tablero()
+    dibujar_tiempos()
     pygame.display.flip()
 
 pygame.quit()
