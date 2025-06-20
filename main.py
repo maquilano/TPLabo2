@@ -12,6 +12,7 @@ BLANCO = (245, 245, 245)
 GRIS = (125, 135, 150)
 AZUL = (50, 130, 200)
 
+tablero = chess.Board()
 # Inicializar Pygame
 pygame.init()
 ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
@@ -79,18 +80,77 @@ def dibujar_tablero():
         if pieza in PIEZAS:
             ventana.blit(PIEZAS[pieza], (col * TAM_CELDA, fila * TAM_CELDA))
 
+#----------------------------------------------------------------------------------------------------------------------------------
 # Bucle principal
 while running:
     
     for evento in pygame.event.get():
-        if evento.type == pygame.QUIT: #fin del while si user cierra el programa 
+        if evento.type == pygame.QUIT:
             running = False
 
-        elif evento.type == pygame.MOUSEBUTTONDOWN: #Detecto si el user hizo click en la ventana del juego
-            x, y = pygame.mouse.get_pos() #Obtenemos cordenadas del click para luego identidicar la celda seleccionada
+        elif evento.type == pygame.MOUSEBUTTONDOWN:
+            # Obtener la posición del mouse y convertir a fila y columna del tablero
+            x, y = pygame.mouse.get_pos()
             fila = y // TAM_CELDA
             col = x // TAM_CELDA
-            celda_seleccionada = (fila, col)
+
+            # Si ya hay una celda seleccionada (primer clic ya hecho)
+            if celda_seleccionada:
+                fila_origen, col_origen = celda_seleccionada
+                fila_destino, col_destino = fila, col
+
+                # Convertir coordenadas de Pygame a sistema de python-chess
+                square_origen = chess.square(col_origen, 7 - fila_origen)
+                square_destino = chess.square(col_destino, 7 - fila_destino)
+
+                # Crear un objeto de movimiento de python-chess
+                movimiento = chess.Move(square_origen, square_destino)
+
+                # Verificar si el movimiento es legal según las reglas de ajedrez
+                if movimiento in tablero.legal_moves:
+                    # Aplicar el movimiento en el tablero lógico
+                    tablero.push(movimiento)
+
+                    # ----------- ACTUALIZAR LA PARTE VISUAL -----------
+
+                    # Paso 1: eliminar la pieza que haya en la posición destino (si hay una pieza para capturar)
+                    nuevas_piezas = []
+                    for pieza, c, f in posiciones_piezas:
+                        if f == fila_destino and c == col_destino:
+                            continue  # Esta pieza es capturada
+                        else:
+                            nuevas_piezas.append((pieza, c, f))
+                    posiciones_piezas = nuevas_piezas
+
+                    # Paso 2: mover la pieza desde origen a destino
+                    for i, (pieza, c, f) in enumerate(posiciones_piezas):
+                        if f == fila_origen and c == col_origen:
+                            posiciones_piezas[i] = (pieza, col_destino, fila_destino)
+                            break
+
+                else:
+                    print("Movimiento ilegal")
+
+                # Resetear la celda seleccionada
+                celda_seleccionada = None
+
+            else:
+                # No había celda seleccionada: seleccionamos una pieza
+                pieza_en_celda = None
+                for pieza, c, f in posiciones_piezas:
+                    if f == fila and c == col:
+                        pieza_en_celda = pieza
+                        break
+
+                if pieza_en_celda:
+                    pieza_es_blanca = pieza_en_celda.endswith("b")
+                    turno_blancas = tablero.turn == chess.WHITE
+
+                    if (turno_blancas and pieza_es_blanca) or (not turno_blancas and not pieza_es_blanca):
+                        celda_seleccionada = (fila, col)
+                    else:
+                        print("No es tu turno")
+
 
     dibujar_tablero()
     pygame.display.flip()
