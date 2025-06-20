@@ -128,7 +128,11 @@ while running:
                 square_destino = chess.square(col_destino, 7 - fila_destino)
 
                 # Crear un objeto de movimiento de python-chess
-                movimiento = chess.Move(square_origen, square_destino)
+                pieza = tablero.piece_at(square_origen)
+                es_peon = pieza is not None and pieza.piece_type == chess.PAWN
+                movimiento = chess.Move(square_origen, square_destino, promotion=chess.QUEEN 
+                if es_peon and (fila_destino == 0 or fila_destino == 7) else None)
+
 
                 # Verificar si el movimiento es legal según las reglas de ajedrez
                 if movimiento in tablero.legal_moves:
@@ -151,7 +155,16 @@ while running:
                         if f == fila_origen and c == col_origen:
                             posiciones_piezas[i] = (pieza, col_destino, fila_destino)
                             break
-
+                    
+                    # Paso 3: conversión de peon
+                    for i, (pieza, c, f) in enumerate(posiciones_piezas):
+                        if pieza == "pb" and f == 0:
+                            posiciones_piezas[i] = ("db", c, f)
+                            print("Peón blanco se convirtió en reina")
+                        elif pieza == "pn" and f == 7:
+                            posiciones_piezas[i] = ("dn", c, f)
+                            print("Peón negro convirtió en reina")
+                        
                 else:
                     print("Movimiento ilegal")
 
