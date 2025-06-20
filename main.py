@@ -62,6 +62,7 @@ pieza_seleccionada = None
 celda_seleccionada = None
 
 def dibujar_tablero():
+    
     for fila in range(FILAS):
         for col in range(COLUMNAS):
             color = BLANCO if (fila + col) % 2 == 0 else GRIS
@@ -80,6 +81,7 @@ def dibujar_tablero():
 
 # Bucle principal
 while running:
+    
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT: #fin del while si user cierra el programa 
             running = False
