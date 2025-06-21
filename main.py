@@ -3,10 +3,14 @@ import chess
 import time
 
 # Configuración básica
+
+
+ALTO_BARRA_TIMER = 40
 ANCHO_VENTANA = 640
-ALTO_VENTANA = 640
 FILAS, COLUMNAS = 8, 8
 TAM_CELDA = ANCHO_VENTANA // COLUMNAS
+ALTO_VENTANA = TAM_CELDA * FILAS + 2 * ALTO_BARRA_TIMER
+
 
 # Colores
 BLANCO = (245, 245, 245)
@@ -75,24 +79,30 @@ ultimo_tiempo = time.time()
 
 # Fuente para mostrar tiempo en pantalla
 fuente = pygame.font.SysFont("Arial", 24)
+y_offset = ALTO_BARRA_TIMER #offset para agregar las barras sup e inf para el timer
 
 def dibujar_tablero():
+    
     
     for fila in range(FILAS):
         for col in range(COLUMNAS):
             color = BLANCO if (fila + col) % 2 == 0 else GRIS
-            rect = pygame.Rect(col * TAM_CELDA, fila * TAM_CELDA, TAM_CELDA, TAM_CELDA)
+            rect = pygame.Rect(col * TAM_CELDA, y_offset + fila * TAM_CELDA, TAM_CELDA, TAM_CELDA)
             pygame.draw.rect(ventana, color, rect)
 
     if celda_seleccionada:
         fila, col = celda_seleccionada
-        rect = pygame.Rect(col * TAM_CELDA, fila * TAM_CELDA, TAM_CELDA, TAM_CELDA)
+        rect = pygame.Rect(col * TAM_CELDA, y_offset + fila * TAM_CELDA, TAM_CELDA, TAM_CELDA)
         pygame.draw.rect(ventana, AZUL, rect, 4)
 
     # Dibujar piezas
     for pieza, col, fila in posiciones_piezas:
         if pieza in PIEZAS:
-            ventana.blit(PIEZAS[pieza], (col * TAM_CELDA, fila * TAM_CELDA))
+            ventana.blit(PIEZAS[pieza], (col * TAM_CELDA, y_offset + fila * TAM_CELDA))
+
+    #dibujar barras para timers
+    pygame.draw.rect(ventana,BLANCO,(0,0, ANCHO_VENTANA, ALTO_BARRA_TIMER))
+    pygame.draw.rect(ventana,BLANCO,(0, ALTO_VENTANA - ALTO_BARRA_TIMER, ANCHO_VENTANA, ALTO_BARRA_TIMER))
 
 def dibujar_tiempos():
     tiempo_b_str = time.strftime('%M:%S', time.gmtime(tiempo_blancas))
@@ -101,8 +111,9 @@ def dibujar_tiempos():
     texto_blanco = fuente.render(f"Blancas: {tiempo_b_str}", True, (0, 0, 0))
     texto_negro = fuente.render(f"Negras: {tiempo_n_str}", True, (0, 0, 0))
 
-    ventana.blit(texto_blanco, (10, 10))
-    ventana.blit(texto_negro, (10, 40))
+    ventana.blit(texto_negro, (10, 10))
+    ventana.blit(texto_blanco, (10, ALTO_VENTANA - ALTO_BARRA_TIMER + 10))
+    
 
 #----------------------------------------------------------------------------------------------------------------------------------
 # Bucle principal
@@ -114,8 +125,13 @@ while running:
 
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             # Obtener la posición del mouse y convertir a fila y columna del tablero
+            
             x, y = pygame.mouse.get_pos()
-            fila = y // TAM_CELDA
+
+            if y < y_offset:
+                continue
+
+            fila = (y - y_offset) // TAM_CELDA
             col = x // TAM_CELDA
 
             # Si ya hay una celda seleccionada (primer clic ya hecho)
