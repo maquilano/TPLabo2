@@ -43,6 +43,17 @@ class EstadoPartida:
             self.tablero.push(jugada)#en caso que el mov sea legal, pusheo el mov
             # Actualizo también la lista de posiciones visuales para reflejar el cambio en pantalla
             self._sincronizar_posiciones(origen, destino, promo)
+            
+            #JAQUE MATE
+            
+            if self.tablero.is_checkmate():
+                self.jaque_mate = True
+
+                if self.tablero.turn == chess.WHITE:
+                    self.gana = "Negras"
+                else:
+                    self.gana = "Blancas"
+
             return True
         return False
     
@@ -198,7 +209,7 @@ def dibujar_tiempos(tiempo_blancas, tiempo_negras):
     ventana.blit(texto_blanco, (10, ALTO_VENTANA - ALTO_BARRA_TIMER + 10))
 
 #Variables de tiempo
-tiempo_total=300
+tiempo_total=10
 tiempo_blancas=tiempo_total
 tiempo_negras=tiempo_total
 turno_blanco = True
@@ -242,13 +253,29 @@ while running:
     # Si alguno llega a 0, termina el juego
     if tiempo_blancas <= 0:
         print("¡Las negras ganan por tiempo!")
+        texto = fuente.render(f"¡Las negras ganan por tiempo!",True, (255,0,0))
+        ventana.blit(texto,(ANCHO_VENTANA // 2 - 150, ALTO_VENTANA // 2))
+        pygame.display.flip()
+        pygame.time.delay(5000)
         running = False
     elif tiempo_negras <= 0:
         print("¡Las blancas ganan por tiempo!")
+        texto = fuente.render(f"¡Las blancas ganan por tiempo!",True, (255,0,0))
+        ventana.blit(texto,(ANCHO_VENTANA // 2 - 150, ALTO_VENTANA // 2))
+        pygame.display.flip()
+        pygame.time.delay(5000)
         running = False
 
 #Renderizado de la ventana
     dibujar_tablero(estado.posiciones, estado.seleccion)
     dibujar_tiempos(tiempo_blancas, tiempo_negras)
     pygame.display.flip()
+
+    if hasattr(estado,"jaque_mate") and estado.jaque_mate:
+        texto = fuente.render(f"JAQUE MATE!!! {estado.gana} gana.",True, (255,0,0))
+        ventana.blit(texto,(ANCHO_VENTANA // 2 - 150, ALTO_VENTANA // 2))
+        pygame.display.flip()
+        pygame.time.delay(5000)
+        running = False
+
 pygame.quit()
