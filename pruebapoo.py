@@ -209,7 +209,7 @@ def dibujar_tiempos(tiempo_blancas, tiempo_negras):
     ventana.blit(texto_blanco, (10, ALTO_VENTANA - ALTO_BARRA_TIMER + 10))
 
 #Variables de tiempo
-tiempo_total=10
+tiempo_total=300
 tiempo_blancas=tiempo_total
 tiempo_negras=tiempo_total
 turno_blanco = True
