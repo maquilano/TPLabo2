@@ -17,3 +17,4 @@ Este es un proyecto de un juego de ajedrez en 2D desarrollado en Python usando l
 - Instalar librerias: pygame y python-ches, en la terminal de VS Code correr los siguientes comandos:
 - pip install pygame
 - pip install python-chess
+- si falla -> py -m pip install pygame / py -m pip install python-chess
