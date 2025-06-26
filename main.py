@@ -173,7 +173,6 @@ for clave, nombre in Nombres_piezas.items(): #clave = rb, nombre = rey_blanco
 running = True
 
 
-
 #gracias a este offset los cliks y la pos del mouse no se ve afectada por el tam de la ventana
 y_offset = ALTO_BARRA_TIMER 
 
