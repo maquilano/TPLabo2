@@ -55,8 +55,12 @@ class EstadoPartida:
                     self.gana = "Blancas"
 
             return True
-        return False
-    
+        return False  
+    def _mover_torre_enroque(self, nuevas_posiciones, origen, destino):
+        for idx, (pieza_id, col, fila) in enumerate(nuevas_posiciones):
+            if (col, fila) == origen and pieza_id.startswith("t"):
+                nuevas_posiciones[idx] = (pieza_id, destino[0], destino[1])
+                break
 
     def _sincronizar_posiciones(self, origen: chess.Square, destino: chess.Square, promo):
         #Lista donde van a generarse las nuevas pos luego de la jugada
@@ -82,6 +86,19 @@ class EstadoPartida:
                 #reemplazamos la tupla de coord antigua con las nuevas
                 nuevas_posiciones[idx] = (pieza_id, columna_destino, fila_destino)
                 break
+        # Detectar enroques
+        if pieza_id.startswith("r"):
+            if (pieza_id == "rb" and (columna_origen, fila_origen) == (4, 7)):
+                if (columna_destino, fila_destino) == (6, 7):  # corto blanco
+                    self._mover_torre_enroque(nuevas_posiciones, (7, 7), (5, 7))
+                elif (columna_destino, fila_destino) == (2, 7):  # largo blanco
+                    self._mover_torre_enroque(nuevas_posiciones, (0, 7), (3, 7))
+            elif (pieza_id == "rn" and (columna_origen, fila_origen) == (4, 0)):
+                if (columna_destino, fila_destino) == (6, 0):  # corto negro
+                    self._mover_torre_enroque(nuevas_posiciones, (7, 0), (5, 0))
+                elif (columna_destino, fila_destino) == (2, 0):  # largo negro
+                    self._mover_torre_enroque(nuevas_posiciones, (0, 0), (3, 0))    
+                    
         #Promocion de peon
         for idx, (pieza_id, columna, fila) in enumerate(nuevas_posiciones):
             if pieza_id == "pb" and fila == 0:
